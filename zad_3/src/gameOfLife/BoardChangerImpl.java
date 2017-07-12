@@ -6,8 +6,10 @@ import java.util.List;
 public class BoardChangerImpl implements BoardChanger {
 
 	boolean[][] startBoard;
+	private int changeNumber;
 
 	public BoardChangerImpl(boolean[][] startBoard) {
+		changeNumber = 0;
 		this.startBoard = startBoard;
 	}
 
@@ -16,6 +18,8 @@ public class BoardChangerImpl implements BoardChanger {
 		boolean[][] result = startBoard;
 		List<Tuple> toDie = findThoseToDie();
 		List<Tuple> toRevive = findThoseToRevive();
+		changeNumber += toRevive.size();
+		changeNumber -= toDie.size();
 		for (Tuple tup : toDie) {
 			result[tup.getX()][tup.getY()] = false;
 		}
@@ -24,6 +28,11 @@ public class BoardChangerImpl implements BoardChanger {
 		}
 		return result;
 
+	}
+	
+	@Override
+	public int aliveChangeNumber() {
+		return changeNumber;
 	}
 
 	private List<Tuple> findThoseToRevive() {

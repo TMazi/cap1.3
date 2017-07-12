@@ -7,9 +7,12 @@ public class BoardImpl implements Board {
 	private boolean[][] board;
 	private float lifeChance;
 	private BoardChanger bci;
+	private int alivecount, iteration;
 
 
 	public BoardImpl(int dimension, float lifeChance) {
+		alivecount = 0;
+		iteration = 0;
 		this.lifeChance = lifeChance;
 		board = new boolean[dimension][dimension];
 		initialize();
@@ -24,8 +27,10 @@ public class BoardImpl implements Board {
 
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board[i].length; j++) {
-				if (rnd.nextFloat() > lifeChance)
+				if (rnd.nextFloat() <= lifeChance) {
 					board[i][j] = true;
+					alivecount++;
+				}
 				else
 					board[i][j] = false;
 			}
@@ -35,10 +40,13 @@ public class BoardImpl implements Board {
 	public void transform() {
 		bci = new BoardChangerImpl(board);
 		board = bci.giveNewBoard();
+		iteration++;
+		alivecount += bci.aliveChangeNumber();
 	}
 
 	
 	public void display() {
+		System.out.print("Iteracja: " + iteration + "\nZywi: " + alivecount +"\n");
 		for(int i = 0; i < board.length; i++) {
 			System.out.print("[ ");
 			for(int j = 0; j < board[i].length; j++ ) {

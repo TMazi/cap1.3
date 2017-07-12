@@ -4,8 +4,8 @@ import java.util.Scanner;
 
 public class Runner {
 
-	final static int DEFAULT_DIMENSION = 15;
-	final static float DEFAULT_LIFE_CHANCE = 0.6F;
+	final static int DEFAULT_DIMENSION = 10;
+	final static float DEFAULT_LIFE_CHANCE = 0.5F;
 	static Scanner sc;
 
 	public static void main(String[] args) {
