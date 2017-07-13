@@ -3,6 +3,13 @@ package gameOfLife;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class responsible for generating new board for
+ * next iteration during game of life
+ * @author TMAZUREK
+ *
+ */
+
 public class BoardChangerImpl implements BoardChanger {
 
 	boolean[][] startBoard;
@@ -13,50 +20,51 @@ public class BoardChangerImpl implements BoardChanger {
 		this.startBoard = startBoard;
 	}
 
+	/**
+	 * Method that takes current state of board and generates
+	 * new board through changing cells state for new one.
+	 * @return board after iteration
+	 */
+	
 	@Override
 	public boolean[][] giveNewBoard() {
-		boolean[][] result = startBoard;
+		boolean[][] transformedBoard = startBoard;
 		List<Tuple> toDie = findThoseToDie();
 		List<Tuple> toRevive = findThoseToRevive();
 		changeNumber += toRevive.size();
 		changeNumber -= toDie.size();
 		for (Tuple tup : toDie) {
-			result[tup.getX()][tup.getY()] = false;
+			transformedBoard[tup.getX()][tup.getY()] = false;
 		}
 		for (Tuple tup : toRevive) {
-			result[tup.getX()][tup.getY()] = true;
+			transformedBoard[tup.getX()][tup.getY()] = true;
 		}
-		return result;
+		return transformedBoard;
 
-	}
-	
-	@Override
-	public int aliveChangeNumber() {
-		return changeNumber;
 	}
 
 	private List<Tuple> findThoseToRevive() {
 
-		List<Tuple> result = new ArrayList<Tuple>();
+		List<Tuple> revivedCells = new ArrayList<Tuple>();
 		for (int i = 0; i < startBoard.length; i++) {
 			for (int j = 0; j < startBoard[i].length; j++) {
 				if (!startBoard[i][j] && shouldRevive(i, j))
-					result.add(new Tuple(i, j));
+					revivedCells.add(new Tuple(i, j));
 			}
 		}
-		return result;
+		return revivedCells;
 	}
 
 	private List<Tuple> findThoseToDie() {
 
-		List<Tuple> result = new ArrayList<Tuple>();
+		List<Tuple> dyingCells = new ArrayList<Tuple>();
 		for (int i = 0; i < startBoard.length; i++) {
 			for (int j = 0; j < startBoard[i].length; j++) {
 				if (startBoard[i][j] && shouldDie(i, j))
-					result.add(new Tuple(i, j));
+					dyingCells.add(new Tuple(i, j));
 			}
 		}
-		return result;
+		return dyingCells;
 
 	}
 
@@ -71,57 +79,37 @@ public class BoardChangerImpl implements BoardChanger {
 		count = checkNeighbours(i, j);
 		return (count < 2 || count > 3);
 	}
-
+	
+	/**
+	 * Method returning number of alive neighbors around
+	 * the [i;j] cell
+	 * @param i row of cell
+	 * @param j	column of cell
+	 * @return number of live neighbors
+	 */
+	
 	private int checkNeighbours(int i, int j) {
-		int count = 0;
-		if (i == 0) {
-			if (j == 0) {
-				Tuple[] neighbours = { new Tuple(i + 1, j), new Tuple(i, j + 1), new Tuple(i + 1, j + 1) };
-				count = countAliveNeighbours(neighbours);
-			} else if (j == startBoard[i].length - 1) {
-				Tuple[] neighbours = { new Tuple(i + 1, j), new Tuple(i, j - 1), new Tuple(i + 1, j - 1) };
-				count = countAliveNeighbours(neighbours);
-			} else {
-				Tuple[] neighbours = { new Tuple(i, j + 1), new Tuple(i, j - 1), new Tuple(i + 1, j),
-						new Tuple(i + 1, j + 1), new Tuple(i + 1, j - 1) };
-				count = countAliveNeighbours(neighbours);
-			}
-		} else if (i == startBoard.length - 1) {
-			if (j == 0) {
-				Tuple[] neighbours = { new Tuple(i - 1, j), new Tuple(i, j + 1), new Tuple(i - 1, j + 1) };
-				count = countAliveNeighbours(neighbours);
-			} else if (j == startBoard[i].length - 1) {
-				Tuple[] neighbours = { new Tuple(i - 1, j), new Tuple(i, j - 1), new Tuple(i - 1, j - 1) };
-				count = countAliveNeighbours(neighbours);
-			} else {
-				Tuple[] neighbours = { new Tuple(i - 1, j + 1), new Tuple(i - 1, j), new Tuple(i - 1, j - 1),
-						new Tuple(i, j - 1), new Tuple(i, j + 1) };
-				count = countAliveNeighbours(neighbours);
-			}
-		} else if (j == 0) {
-			Tuple[] neighbours = { new Tuple(i - 1, j), new Tuple(i + 1, j), new Tuple(i - 1, j + 1),
-					new Tuple(i + 1, j + 1), new Tuple(i, j + 1) };
-			count = countAliveNeighbours(neighbours);
-		} else if (j == startBoard[i].length - 1) {
-			Tuple[] neighbours = { new Tuple(i - 1, j), new Tuple(i + 1, j), new Tuple(i - 1, j - 1),
-					new Tuple(i + 1, j - 1), new Tuple(i, j - 1) };
-			count = countAliveNeighbours(neighbours);
-		} else {
-			Tuple[] neighbours = { new Tuple(i - 1, j + 1), new Tuple(i + 1, j + 1), new Tuple(i, j + 1),
-					new Tuple(i + 1, j - 1), new Tuple(i + 1, j), new Tuple(i - 1, j), new Tuple(i, j - 1),
-					new Tuple(i - 1, j - 1) };
-			count = countAliveNeighbours(neighbours);
+
+		return checkThisNeighbour(i-1, j-1) + checkThisNeighbour(i-1, j) + checkThisNeighbour(i-1, j+1) +
+				checkThisNeighbour(i, j-1) + checkThisNeighbour(i, j+1) + checkThisNeighbour(i+1, j) +
+				checkThisNeighbour(i+1, j+1) + checkThisNeighbour(i+1, j-1); 
+	}
+	
+	private int checkThisNeighbour(int i, int j) {
+		int result = 0;
+		try {
+			if(startBoard[i][j])
+				result++;
 		}
-		return count;
+		catch(ArrayIndexOutOfBoundsException e) {
+			
+		}
+		return result;
 	}
 
-	private int countAliveNeighbours(Tuple[] neighbours) {
-		int count = 0;
-		for (Tuple tup : neighbours) {
-			if (startBoard[tup.getX()][tup.getY()])
-				count++;
-		}
-		return count;
+	@Override
+	public int aliveChangeNumber() {
+		return changeNumber;
 	}
 
 }

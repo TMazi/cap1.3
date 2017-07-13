@@ -2,10 +2,14 @@ package gameOfLife;
 
 import java.util.Scanner;
 
+/*
+ * Class used to show example working of game of life
+ */
+
 public class Runner {
 
-	final static int DEFAULT_DIMENSION = 10;
-	final static float DEFAULT_LIFE_CHANCE = 0.5F;
+	final static int DEFAULT_DIMENSION = 40;
+	final static float DEFAULT_LIFE_CHANCE = 0.3F;
 	static Scanner sc;
 
 	public static void main(String[] args) {
@@ -22,20 +26,20 @@ public class Runner {
 		if (result.equals("1")) {
 			while (true) {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(200);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				board.transform();
-				System.out.println();
 				board.display();
+				
 			}
 		} else if (result.equals("2")) {
 			while (true) {
 				if (sc.nextLine().equals("")) {
 					board.transform();
-					System.out.println();
 					board.display();
+
 				}
 			}
 		}
